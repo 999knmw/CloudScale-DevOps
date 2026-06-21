@@ -20,7 +20,7 @@ spec:
       containers:
       - name: cloudscale-app
 
-        image: YOUR_ACR.azurecr.io/cloudscale-app:latest
+        image: cloudscaleacr.azurecr.io/cloudscale-app:latest
 
         ports:
         - containerPort: 5000
