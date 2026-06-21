@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: cloudscale-service
+
+spec:
+  selector:
+    app: cloudscale
+
+  type: LoadBalancer
+
+  ports:
+  - port: 80
+    targetPort: 5000
