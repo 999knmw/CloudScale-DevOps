@@ -7,7 +7,7 @@ variable "resource_group_name" {
 variable "location" {
   description = "Azure region"
   type        = string
-  default     = "eastus"
+  default     = "swedencentral"    # Allowed region from your list
 }
 
 variable "acr_name" {
@@ -31,5 +31,5 @@ variable "node_count" {
 variable "node_size" {
   description = "Size of the nodes"
   type        = string
-  default     = "Standard_B2s"
+  default     = "Standard_B2s_v2"    # ← FIXED: Added _v2
 }
