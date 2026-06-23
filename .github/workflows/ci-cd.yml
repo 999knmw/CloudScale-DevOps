@@ -7,6 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
+  ACR_NAME: cloudscalesara
   ACR_LOGIN_SERVER: cloudscalesara.azurecr.io
   IMAGE_NAME: cloudscale
   AKS_CLUSTER_NAME: CloudScale-AKS
