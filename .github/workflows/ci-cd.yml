@@ -82,6 +82,7 @@ jobs:
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
 
+
       - name: Deploy Manifests
         run: |
           kubectl apply -f k8s/
