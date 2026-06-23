@@ -2,23 +2,23 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: cloudscale-app
+  name: cloudscale
 
 spec:
   replicas: 3
 
   selector:
     matchLabels:
-      app: cloudscale-app
+      app: cloudscale
 
   template:
     metadata:
       labels:
-        app: cloudscale-app
+        app: cloudscale
 
     spec:
       containers:
-      - name: cloudscale-app
+      - name: cloudscale
 
         image: cloudscaleacr.azurecr.io/cloudscale-app:latest
 

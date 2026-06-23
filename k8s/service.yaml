@@ -6,7 +6,7 @@ metadata:
 
 spec:
   selector:
-    app: cloudscale-app
+    app: cloudscale
 
   type: LoadBalancer
 
