@@ -1,40 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
   name: cloudscale
-
 spec:
   replicas: 3
-
   selector:
     matchLabels:
       app: cloudscale
-
   template:
     metadata:
       labels:
         app: cloudscale
-
     spec:
       containers:
       - name: cloudscale
-
-        image: cloudscalesara.azurecr.io/cloudscale-app:latest
-
+        image: cloudscalesara.azurecr.io/cloudscale:latest  # ← CHANGED: cloudscale-app → cloudscale
         ports:
         - containerPort: 5000
-
         readinessProbe:
           httpGet:
             path: /health
             port: 5000
           initialDelaySeconds: 5
           periodSeconds: 5
-
         livenessProbe:
           httpGet:
             path: /health
             port: 5000
           initialDelaySeconds: 10
           periodSeconds: 10
+      imagePullSecrets:
+      - name: acr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudscale-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: cloudscale
