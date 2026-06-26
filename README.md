@@ -73,6 +73,49 @@ flowchart TD
     H --> LB
     LB -->|Expose| User[User Access via Browser]
 ```
+### 4. Application Containerization & Kubernetes Deployment
+
+developing the web application, containerizing it with Docker, and preparing the Kubernetes manifests for deployment to Azure Kubernetes Service (AKS).
+
+Docker:
+
+Build the Docker Image
+docker build --no-cache -t cloudscale-app .
+
+Builds the Docker image from the Dockerfile.
+
+Run the Container Locally
+docker run --rm -p 8080:5000 cloudscale-app
+
+Runs the application locally and maps port 8080 on the host to port 5000 inside the container.
+
+Verify the Health Endpoint
+curl http://localhost:8080/health
+
+Verifies that the application is running correctly and returns a 200 OK response.
+
+Kubernetes Deployment:
+
+Apply the Deployment Manifest
+kubectl apply -f k8s/deployment.yaml
+
+Creates the Kubernetes Deployment with three replicas.
+
+Apply the Service Manifest
+kubectl apply -f k8s/service.yaml
+
+Creates a LoadBalancer Service to expose the application externally.
+
+Verify the Cluster Nodes
+kubectl get nodes
+
+Checks that all AKS worker nodes are in the Ready state.
+
+Verify the Services
+kubectl get service
+
+Displays the Kubernetes services and the assigned External IP for accessing the application.
+
 ### 5. Github Actions Workflow Explanation
 
 Our CI/CD pipeline is designed around a professional, production-grade automation strategy. It separates build verification from deployment, ensuring that no containerized application reaches our Kubernetes cluster without passing automated tests and receiving manual authorization.
