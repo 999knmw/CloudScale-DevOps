@@ -22,7 +22,7 @@
 * **Secure Authentication:** Streamlined Azure resource management via Service Principals configured securely as repository secrets.
 
 
-### 3. Architecture Diagram
+## 3. Architecture Diagram
 ```mermaid
 %%{init: {
   'theme': 'base',
@@ -77,46 +77,76 @@ flowchart TD
 
 developing the web application, containerizing it with Docker, and preparing the Kubernetes manifests for deployment to Azure Kubernetes Service (AKS).
 
-Docker:
+## Docker Instructions:
 
-Build the Docker Image
+### 1. Build the Docker Image
+ Builds the Docker image from the Dockerfile.
+```bash
 docker build --no-cache -t cloudscale-app .
+```
 
-Builds the Docker image from the Dockerfile.
-
-Run the Container Locally
-docker run --rm -p 8080:5000 cloudscale-app
-
+### 2. Run the Container Locally
 Runs the application locally and maps port 8080 on the host to port 5000 inside the container.
+```bash
+docker run --rm -p 8080:5000 cloudscale-app
+```
 
-Verify the Health Endpoint
-curl http://localhost:8080/health
-
+### 3. Verify the Health Endpoint
 Verifies that the application is running correctly and returns a 200 OK response.
+```bash
+curl http://localhost:8080/health
+```
+## Terraform Instructions: 
+### 1. Initialize the Directory
+Initialize the working directory containing Terraform configuration files. This downloads the necessary provider plugins.
+```bash
+terraform init
+```
+### 2. Validate configuration
+The terraform validate command validates the configuration files in a directory.   
+```bash
+terraform validate
+```
 
-Kubernetes Deployment:
+### 3. Generate an Execution Plan
+Create an execution plan, letting you preview the cloud infrastructure changes Terraform will make before applying them.
+```bash
+terraform plan
+```
+### 4. Apply the Configuration
+Build or change the cloud infrastructure according to the configuration files.
+```bash
+terraform apply
+```
 
-Apply the Deployment Manifest
+## Kubernetes Deployment Instructions:
+
+### 1. Apply the Deployment Manifest
+```bash
 kubectl apply -f k8s/deployment.yaml
+```
 
-Creates the Kubernetes Deployment with three replicas.
-
+### 2. Creates the Kubernetes Deployment with three replicas.
 Apply the Service Manifest
+```bash
 kubectl apply -f k8s/service.yaml
+```
 
-Creates a LoadBalancer Service to expose the application externally.
-
-Verify the Cluster Nodes
+### 3. Creates a LoadBalancer Service to expose the application externally.
+Verify the Cluster Nodes, checks that all AKS worker nodes are in the Ready state.
+```bash
 kubectl get nodes
+```
 
-Checks that all AKS worker nodes are in the Ready state.
-
-Verify the Services
-kubectl get service
-
+### 4.Verify the Services
 Displays the Kubernetes services and the assigned External IP for accessing the application.
+```bash
+kubectl get service
+```
 
-### 5. Github Actions Workflow Explanation
+
+
+## 5. Github Actions Workflow Explanation
 
 Our CI/CD pipeline is designed around a professional, production-grade automation strategy. It separates build verification from deployment, ensuring that no containerized application reaches our Kubernetes cluster without passing automated tests and receiving manual authorization.
 
