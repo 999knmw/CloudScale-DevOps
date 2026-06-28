@@ -12,9 +12,13 @@ spec:
       labels:
         app: cloudscale
     spec:
+
+      imagePullSecrets:
+      - name: acr-secret
+
       containers:
       - name: cloudscale
-        image: cloudscalesara.azurecr.io/cloudscale:latest  # ← CHANGED: cloudscale-app → cloudscale
+        image: cloudscaleacr.azurecr.io/cloudscale:latest  # ← CHANGED: cloudscale-app → cloudscale
         ports:
         - containerPort: 5000
         readinessProbe:

@@ -58,10 +58,6 @@ jobs:
           terraform init
           terraform apply -auto-approve
 
-      - name: Attach ACR to AKS via Azure CLI
-        run: |
-          az aks update --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }} --attach-acr ${{ env.ACR_NAME }}
-
   # JOB 3: Push to ACR 
   push-to-acr:
     name: Build & Push to Azure Container Registry
@@ -112,6 +108,15 @@ jobs:
         with:
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+
+      - name: Create Image Pull Secret in AKS
+        run: |
+          kubectl create secret docker-registry acr-secret \
+            --docker-server=${{ env.ACR_LOGIN_SERVER }} \
+            --docker-username=${{ env.ACR_NAME }} \
+            --docker-password=${{ secrets.ACR_PASSWORD }} \
+            --docker-email=student@limu.edu.ly \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy Manifests
         run: |
