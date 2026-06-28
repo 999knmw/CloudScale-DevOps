@@ -15,6 +15,7 @@ env:
 
 jobs:
   
+  # JOB 1: Build & Test (Runs on PRs and main pushes)
   build-test:
     name: Build & Test Application
     runs-on: ubuntu-latest
@@ -32,10 +33,35 @@ jobs:
           load: true 
           tags: ${{ env.IMAGE_NAME }}:test
 
-  # JOB 2: Push to ACR (Only runs on Main merge/push)
+  # NEW JOB 2: Provision Infrastructure via Terraform (Only runs on Main merge/push)
+  provision-infra:
+    name: Provision Infrastructure (Terraform)
+    needs: build-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.SECRETS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.0 
+
+      - name: Terraform Init & Apply
+        run: |
+          terraform init
+          terraform apply -auto-approve
+
+  # JOB 3: Push to ACR 
   push-to-acr:
     name: Build & Push to Azure Container Registry
-    needs: build-test
+    needs: provision-infra 
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -49,7 +75,7 @@ jobs:
 
       - name: Log in to Azure Container Registry
         run: |
-          az acr login --name ${{ env.ACR_LOGIN_SERVER }}
+          az acr login --name ${{ env.ACR_NAME }} # Optimized to use resource name directly
 
       - name: Build and Push Production Image
         uses: docker/build-push-action@v5
@@ -60,7 +86,7 @@ jobs:
             ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
-  # Job 3: Deploy to AKS (Only runs on Main merge/push)
+  # JOB 4: Deploy to AKS (Only runs on Main merge/push after image is built)
   deploy-to-aks:
     name: Deploy to Azure Kubernetes Service
     needs: push-to-acr
@@ -85,4 +111,6 @@ jobs:
 
       - name: Deploy Manifests
         run: |
+          # Replaces the placeholder image tag in deployment template with the actual commit SHA
+          sed -i "s|image: .*|image: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}|g" k8s/deployment.yaml
           kubectl apply -f k8s/
