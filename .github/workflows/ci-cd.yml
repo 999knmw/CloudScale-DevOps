@@ -58,6 +58,10 @@ jobs:
           terraform init
           terraform apply -auto-approve
 
+      - name: Attach ACR to AKS via Azure CLI
+        run: |
+          az aks update --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }} --attach-acr ${{ env.ACR_NAME }}
+
   # JOB 3: Push to ACR 
   push-to-acr:
     name: Build & Push to Azure Container Registry
